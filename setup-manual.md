@@ -567,3 +567,45 @@ $ git add .husky/pre-commit
 ```
 
 > git commit: `chore: setup lint-staged`
+
+### `commitlint`
+
+安装依赖：
+
+```shell
+$ pnpm add --save-dev \
+  @commitlint/cli@^19 \
+  @commitlint/config-conventional@^19 \
+  @commitlint/types@^19
+$ pnpm update
+```
+
+配置 `commitlint`：
+
+> 注意，后面安装的 `cz-git` 与 `commitlint` 共享配置文件，但不支持 TS。这里使用 js 格式。
+
+```shell
+$ cat <<EOF > .commitlintrc.js
+export default {
+  extends: ["@commitlint/config-conventional"],
+  rules: {
+    "subject-case": [0],
+    "type-enum": [
+      2,
+      "always",
+      ["feat", "fix", "docs", "style", "refactor", "perf", "test", "build", "ci", "chore", "revert"],
+    ],
+  },
+};
+EOF
+$ git add .commitlintrc.js
+```
+
+配置为 `commit-msg` 钩子：
+
+```shell
+$ echo "pnpm dlx commitlint --edit \$1" > .husky/commit-msg
+$ git add .husky/commit-msg
+```
+
+> git commit: `chore: setup commitlint`
