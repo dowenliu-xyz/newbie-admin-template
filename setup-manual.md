@@ -776,3 +776,60 @@ EOF
 
 > 我修改了 `HelloWorld.vue` 文件，以便验证 `element-plus` 组件是否正常工作。
 > git commit: `refactor: :recycle: integrate with element-plus`
+
+## 集成 SCSS
+
+安装依赖：
+
+```shell
+$ pnpm add --save-dev sass@^1
+$ pnpm update
+```
+
+配置 SCSS 全局变量
+
+```shell
+$ mkdir -p src/styles
+$ echo '$bg-color: #242424;' > src/styles/variables.scss
+$ cat <<'EOF' > src/styles/variables.module.scss
+:export{
+    bgColor:$bg-color
+}
+EOF
+$ git add src/styles/variables.scss src/styles/variables.module.scss
+$ cat <<'EOF' | patch .stylelintrc.mjs
+@@ -32,7 +32,7 @@
+     "property-no-unknown": [
+       true,
+       {
+-        ignoreProperties: [],
++        ignoreProperties: ["bgColor"],
+       },
+     ],
+     "at-rule-no-unknown": [
+EOF
+```
+```shell
+$ cat <<'EOF' | patch vite.config.ts
+@@ -13,6 +13,16 @@
+         "@": pathSrc,
+       },
+     },
++    css: {
++      preprocessorOptions: {
++        scss: {
++          javascriptEnabled: true,
++          additionalData: `
++            @use "@/styles/variables.scss" as *;
++          `,
++        },
++      },
++    },
+     plugins: [vue(), ElementPlus({})],
+   };
+ });
+EOF
+```
+
+> 我修改了 `HelloWorld.vue` 文件，以便验证 SCSS 是否正确集成。
+> git commit: `refactor: :recycle: integrate with scss`

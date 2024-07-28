@@ -13,6 +13,16 @@ export default defineConfig((): UserConfig => {
         "@": pathSrc,
       },
     },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          javascriptEnabled: true,
+          additionalData: `
+            @use "@/styles/variables.scss" as *;
+          `,
+        },
+      },
+    },
     plugins: [vue(), ElementPlus({})],
   };
 });

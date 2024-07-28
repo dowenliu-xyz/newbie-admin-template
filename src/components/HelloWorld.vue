@@ -2,6 +2,9 @@
 import { ref } from "vue";
 import { ElButton, ElIcon } from "element-plus";
 import { InfoFilled, SuccessFilled, WarningFilled, WarnTriangleFilled } from "@element-plus/icons-vue";
+import variables from "@/styles/variables.module.scss";
+
+console.log(variables.bgColor);
 
 defineProps<{ msg: string }>();
 
@@ -55,10 +58,22 @@ const count = ref(0);
       Danger
     </el-button>
   </div>
+  <div>
+    <div class="box"></div>
+    <div style="width: 100px; height: 100px" :style="{ 'background-color': variables.bgColor }" />
+  </div>
 </template>
 
 <style scoped>
 .read-the-docs {
   color: #888;
+}
+</style>
+
+<style scoped lang="scss">
+.box {
+  width: 100px;
+  height: 100px;
+  background-color: $bg-color;
 }
 </style>

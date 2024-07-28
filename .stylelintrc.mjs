@@ -32,7 +32,7 @@ export default {
     "property-no-unknown": [
       true,
       {
-        ignoreProperties: [],
+        ignoreProperties: ["bgColor"],
       },
     ],
     "at-rule-no-unknown": [
