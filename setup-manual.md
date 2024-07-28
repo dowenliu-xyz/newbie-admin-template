@@ -941,3 +941,103 @@ EOF
 
 > 我修改了 `HelloWorld.vue` 文件，以便验证 `UnoCSS` 是否正常工作。
 > git commit: `refactor: :recycle: integrate with unocss`
+
+## 集成 `pinia`
+
+安装依赖：
+
+```shell
+$ pnpm add pinia@^2
+$ pnpm update
+```
+
+注册 `pinia` 插件：
+
+```shell
+$ cat <<'EOF' | patch src/main.ts
+@@ -2,5 +2,8 @@
+ import "./style.css";
+ import App from "./App.vue";
+ import "virtual:uno.css";
++import { createPinia } from "pinia";
+ 
+-createApp(App).mount("#app");
++const app = createApp(App);
++app.use(createPinia());
++app.mount("#app");
+EOF
+```
+
+编写示例组件以验证 `pinia` 是否正常工作：
+
+store:
+
+```shell
+$ mkdir -p src/store
+$ cat <<'EOF' > src/store/counter.ts
+import { ref, computed } from "vue";
+import { defineStore } from "pinia";
+
+export const useCounterStore = defineStore("counter", () => {
+  // ref变量 → state 属性
+  const count = ref(0);
+  // computed计算属性 → getters
+  const double = computed(() => {
+    return count.value * 2;
+  });
+
+  // function函数 → actions
+  function increment() {
+    count.value++;
+  }
+
+  return { count, double, increment };
+});
+EOF
+$ git add src/store/counter.ts
+```
+
+子组件：
+
+```shell
+$ cat <<'EOF' > src/components/HelloWorld.vue
+<script setup lang="ts">
+import { ElCard, ElFormItem } from "element-plus";
+import { useCounterStore } from "@/store/counter";
+
+const counterStore = useCounterStore();
+</script>
+
+<template>
+  <el-card class="text-left text-white border-white border-1 border-solid mt-10 bg-[#242424]">
+    <template #header>子组件 HelloWorld.vue</template>
+    <el-form>
+      <el-form-item label="数字：">{{ counterStore.count }}</el-form-item>
+      <el-form-item label="加倍：">{{ counterStore.double }}</el-form-item>
+    </el-form>
+  </el-card>
+</template>
+EOF
+```
+
+父组件：
+
+```shell
+$ cat <<'EOF' > src/App.vue
+<script setup lang="ts">
+import HelloWorld from "@/components/HelloWorld.vue";
+import { useCounterStore } from "@/store/counter";
+import { ElButton } from "element-plus";
+
+const counterStore = useCounterStore();
+</script>
+
+<template>
+  <h1 class="text-3xl">父组件</h1>
+  <el-button type="primary" @click="counterStore.increment">count++</el-button>
+  <HelloWorld />
+</template>
+EOF
+```
+
+> git commit: `refactor: :recycle: integrate with pinia`
