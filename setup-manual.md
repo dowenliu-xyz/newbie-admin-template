@@ -737,3 +737,42 @@ EOF
 ```
 
 > git commit: `chore: :hammer: setup commitizen and cz-git`
+
+## 集成 `element-plus` 组件库
+
+> 我是多年后端开发。我对代码显式声明有强烈的偏好，不喜欢隐藏细节的 `unplugin` “魔法”。
+> 所以这里没有使用 `unplugin-vue-components` 和 `unplugin-auto-import`。
+> 但我选择使用了 `unplugin-element-plus` ，因为使用每个组件还显示导入其样式真的很烦、很傻、易遗漏。
+
+安装依赖：
+
+```shell
+$ pnpm add element-plus@^2 @element-plus/icons-vue@^2
+$ pnpm add --save-dev unplugin-element-plus@^0
+$ pnpm update
+```
+
+配置 `unplugin-element-plus`：
+
+```shell
+$ cat <<EOF | patch vite.config.ts
+@@ -1,5 +1,6 @@
+ import { defineConfig, UserConfig } from "vite";
+ import vue from "@vitejs/plugin-vue";
++import ElementPlus from "unplugin-element-plus/vite";
+ import { resolve } from "path";
+ 
+ const pathSrc = resolve(__dirname, "src");
+@@ -12,6 +13,6 @@
+         "@": pathSrc,
+       },
+     },
+-    plugins: [vue()],
++    plugins: [vue(), ElementPlus({})],
+   };
+ });
+EOF
+```
+
+> 我修改了 `HelloWorld.vue` 文件，以便验证 `element-plus` 组件是否正常工作。
+> git commit: `refactor: :recycle: integrate with element-plus`

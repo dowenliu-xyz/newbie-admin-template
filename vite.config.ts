@@ -1,5 +1,6 @@
 import { defineConfig, UserConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import ElementPlus from "unplugin-element-plus/vite";
 import { resolve } from "path";
 
 const pathSrc = resolve(__dirname, "src");
@@ -12,6 +13,6 @@ export default defineConfig((): UserConfig => {
         "@": pathSrc,
       },
     },
-    plugins: [vue()],
+    plugins: [vue(), ElementPlus({})],
   };
 });
