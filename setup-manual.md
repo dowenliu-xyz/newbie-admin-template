@@ -143,3 +143,26 @@ EOF
 ```
 
 > git commit: `build: add '@' path alias`
+
+## 使用 `.editorconfig` 统一编辑器配置
+
+```shell
+$ cat <<EOF > .editorconfig
+# https://editorconfig.org
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+EOF
+$ git add .editorconfig
+```
+
+> git commit: `chore: add .editorconfig`
