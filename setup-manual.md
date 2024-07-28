@@ -487,3 +487,19 @@ EOF
 ```
 
 > git commit: `build: setup and run prettier`
+
+## 配置 git 提交 hook 和 lints
+
+### `husky`
+
+安装依赖：
+
+```shell
+$ pnpm add --save-dev husky@9
+$ pnpm update
+$ pnpm exec husky init
+# 设置总是成功的无用指令，以便提交
+$ echo "pnpm -v" > .husky/pre-commit
+```
+
+> git commit: `chore: setup husky`
