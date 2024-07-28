@@ -1,0 +1,55 @@
+搭建记录 - 作为超新手
+---
+当前手册记录了搭建最少“魔法”的 vue admin 项目的步骤。最终项目结构可能不是最佳生产实践，但它应该非常适合新手起步：使用的技术易于理解、阅读，可安全的进行按需修改调整。
+
+为了方便在之后复现，我尽可能固定安装的组件的版本。
+
+> 个人吐槽：按网上的文章学习前端总是难以复现文章内容，组件更新太泥马快了。这些年里，我尝试过好多次自学前端，几乎没见过有固定版本号意识的作者。。。。
+
+## 搭建项目之前
+
+### Node.js
+
+我使用 `nvm` 来管理 node 版本。`nvm` 的安装这里不详述，参考 [GitHub](https://github.com/nvm-sh/nvm)。
+我当前使用的 node 版本为 `v20.15.1`.
+
+```shell
+$ nvm install --lts=iron
+$ nvm alias default lts/iron
+$ nvm current
+# v20.16.0
+```
+
+### Package manager
+
+我选择使用 `pnpm` 作为包管理器。我不想总结我不选择使用默认的 `npm` 的理由，起码它在我的环境里很慢。
+
+> 我作为新手，搭建本项目时我的学习、参考文章大多都使用 `pnpm` ，所以我也直接使用它。我不想不断搜索解决工具相关问题。
+
+使用 `corepack` 启用 `pnpm`。
+
+```shell
+$ corepack enable pnpm
+```
+
+> 注意，我这里之前尝试全局安装过 `pnpm` ，之后这导致我 `corepack` 启用 `pnpm` 失败，直到我删除了全局安装。
+> 我选择 `corepack` 启用 `pnpm` 是因为我想之后通过 `corepack use pnpm@latest` 命令把包管理器类型版本固定在 `package.json` 里。这对统一团队开发环境一致性有益。
+
+## 创建工程
+
+通过以下命令创建工程：
+
+```shell
+$ pnpm create vite@5 newbie-admin-template --template vue-ts
+```
+
+> 注意到 `vite@5` 中了 `@5` 了吗？我期望在命令中固定版本（起码是大版本，no breaking change in future），我期望之后这样可以让任何人可以重现操作结果。
+> 当前 `vite` 最新版本为 `5.x`。
+
+之后切换到工程目录：
+
+```shell
+$ cd newbie-admin-template
+```
+
+> git commit: `build: Initialized project`
