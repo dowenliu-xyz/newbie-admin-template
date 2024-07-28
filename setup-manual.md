@@ -1041,3 +1041,86 @@ EOF
 ```
 
 > git commit: `refactor: :recycle: integrate with pinia`
+
+## 环境变量和 API 反向代理
+
+TypeScript 智能提示配置：
+
+```shell
+$ cat <<'EOF' > src/vite-env.d.ts
+/// <reference types="vite/client" />
+
+interface ImportMetaEnv {
+  readonly VITE_APP_PORT: number;
+  readonly VITE_APP_BASE_API: string;
+  readonly VITE_APP_API_URL: string;
+  readonly VITE_MOCK_DEV_SERVER: boolean;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
+EOF
+```
+
+环境变量配置：
+
+```shell
+$ cat <<'EOF' > .env.development
+VITE_APP_PORT = 3000
+VITE_APP_BASE_API = '/dev-api'
+VITE_APP_API_URL = http://localhost:8080
+VITE_MOCK_DEV_SERVER = false
+EOF
+$ git add .env.development
+$ cat <<'EOF' > .env.production
+VITE_APP_BASE_API = '/prod-api'
+EOF
+$ git add .env.production
+```
+
+应用环境变量，配置 API 反向代理：
+
+```shell
+$ cat <<'EOF' | patch vite.config.ts
+@@ -1,13 +1,13 @@
+-import { defineConfig, UserConfig } from "vite";
+ import vue from "@vitejs/plugin-vue";
++import { ConfigEnv, defineConfig, loadEnv, UserConfig } from "vite";
+ import ElementPlus from "unplugin-element-plus/vite";
+-import { resolve } from "path";
+ import UnoCSS from "unocss/vite";
++import { resolve } from "path";
+ 
+ const pathSrc = resolve(__dirname, "src");
+-
+ // https://vitejs.dev/config/
+-export default defineConfig((): UserConfig => {
++export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
++  const env = loadEnv(mode, process.cwd());
+   return {
+     resolve: {
+       alias: {
+@@ -24,6 +24,18 @@
+         },
+       },
+     },
++    server: {
++      host: "0.0.0.0",
++      port: Number(env.VITE_APP_PORT),
++      open: true,
++      proxy: {
++        [env.VITE_APP_BASE_API]: {
++          changeOrigin: true,
++          target: env.VITE_APP_API_URL,
++          rewrite: (path) => path.replace(new RegExp("^" + env.VITE_APP_BASE_API), ""),
++        },
++      },
++    },
+     plugins: [vue(), ElementPlus({}), UnoCSS({ hmrTopLevelAwait: false })],
+   };
+ });
+EOF
+```
+
+> git commit: `refactor: :recycle: setup env & api proxy`
