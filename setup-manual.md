@@ -609,3 +609,131 @@ $ git add .husky/commit-msg
 ```
 
 > git commit: `chore: setup commitlint`
+
+### `commitizen` 和 `cz-git`
+
+安装依赖：
+
+```shell
+$ pnpm add --save-dev commitizen@^4 cz-git@^1
+$ pnpm update
+```
+
+配置 `commitizen`：
+
+```shell
+$ cat <<EOF | patch package.json
+@@ -13,4 +13,9 @@
+     "lint:lint-staged": "lint-staged",
+     "prepare": "husky"
+   },
++  "config": {
++    "commitizen": {
++      "path": "node_modules/cz-git"
++    }
++  },
+   "dependencies": {
+EOF
+```
+
+配置 `cz-git`：
+
+```shell
+$ cat <<EOF | patch .commitlintrc.js
+@@ -8,4 +8,75 @@
+       ["feat", "fix", "docs", "style", "refactor", "perf", "test", "build", "ci", "chore", "revert"],
+     ],
+   },
++  prompt: {
++    alias: { fd: "docs: fix typos" },
++    messages: {
++      type: "Select the type of change that you're committing:",
++      scope: "Denote the SCOPE of this change (optional):",
++      customScope: "Denote the SCOPE of this change:",
++      subject: "Write a SHORT, IMPERATIVE tense description of the change:\n",
++      body: 'Provide a LONGER description of the change (optional). Use "|" to break new line:\n',
++      breaking: 'List any BREAKING CHANGES (optional). Use "|" to break new line:\n',
++      footerPrefixesSelect: "Select the ISSUES type of changeList by this change (optional):",
++      customFooterPrefix: "Input ISSUES prefix:",
++      footer: "List any ISSUES by this change. E.g.: #31, #34:\n",
++      generatingByAI: "Generating your AI commit subject...",
++      generatedSelectByAI: "Select suitable subject by AI generated:",
++      confirmCommit: "Are you sure you want to proceed with the commit above?",
++    },
++    types: [
++      { value: "feat", name: "feat:     ✨  A new feature", emoji: ":sparkles:" },
++      { value: "fix", name: "fix:      🐛  A bug fix", emoji: ":bug:" },
++      { value: "docs", name: "docs:     📝  Documentation only changes", emoji: ":memo:" },
++      { value: "style", name: "style:    💄  Changes that do not affect the meaning of the code", emoji: ":lipstick:" },
++      {
++        value: "refactor",
++        name: "refactor: ♻️   A code change that neither fixes a bug nor adds a feature",
++        emoji: ":recycle:",
++      },
++      { value: "perf", name: "perf:     ⚡️  A code change that improves performance", emoji: ":zap:" },
++      {
++        value: "test",
++        name: "test:     ✅  Adding missing tests or correcting existing tests",
++        emoji: ":white_check_mark:",
++      },
++      {
++        value: "build",
++        name: "build:    📦️   Changes that affect the build system or external dependencies",
++        emoji: ":package:",
++      },
++      { value: "ci", name: "ci:       🎡  Changes to our CI configuration files and scripts", emoji: ":ferris_wheel:" },
++      { value: "chore", name: "chore:    🔨  Other changes that don't modify src or test files", emoji: ":hammer:" },
++      { value: "revert", name: "revert:   ⏪️  Reverts a previous commit", emoji: ":rewind:" },
++    ],
++    useEmoji: true,
++    emojiAlign: "center",
++    useAI: false,
++    aiNumber: 1,
++    themeColorCode: "",
++    scopes: [],
++    allowCustomScopes: true,
++    allowEmptyScopes: true,
++    customScopesAlign: "bottom",
++    customScopesAlias: "custom",
++    emptyScopesAlias: "empty",
++    upperCaseSubject: false,
++    markBreakingChangeMode: false,
++    allowBreakingChanges: ["feat", "fix"],
++    breaklineNumber: 100,
++    breaklineChar: "|",
++    skipQuestions: [],
++    issuePrefixes: [{ value: "closed", name: "closed:   ISSUES has been processed" }],
++    customIssuePrefixAlign: "top",
++    emptyIssuePrefixAlias: "skip",
++    customIssuePrefixAlias: "custom",
++    allowCustomIssuePrefix: true,
++    allowEmptyIssuePrefix: true,
++    confirmColorize: true,
++    scopeOverrides: undefined,
++    defaultBody: "",
++    defaultIssues: "",
++    defaultScope: "",
++    defaultSubject: "",
++  },
+ };
+EOF
+```
+
+添加 `commit` 脚本
+
+```shell
+$ cat <<EOF | patch package.json
+@@ -11,7 +11,8 @@
+     "lint:prettier": "prettier --write \"**/*.{js,cjs,ts,json,tsx,css,less,scss,vue,html,md}\"",
+     "lint:stylelint": "stylelint  \"**/*.{css,scss,vue}\" --fix",
+     "lint:lint-staged": "lint-staged",
+-    "prepare": "husky"
++    "prepare": "husky",
++    "commit": "git-cz"
+   },
+   "config": {
+     "commitizen": {
+EOF
+```
+
+> git commit: `chore: :hammer: setup commitizen and cz-git`
