@@ -166,3 +166,108 @@ $ git add .editorconfig
 ```
 
 > git commit: `chore: add .editorconfig`
+
+## 配置 `eslint` 、 `stylelint` 和 `prettier`
+
+### `eslint`
+
+当前最新 `eslint` 版本为 `9.x`，这个版本的配置格式与之前版本有比较大的变化，且有此组件还有没很好的适配这个版本。
+
+> 我找到的参考资料也几乎没有使用 `9.x` 版本配置格式的。
+
+这里选择使用 `8.x` 版本，避坑。
+
+安装依赖
+
+```shell
+$ pnpm add --save-dev eslint@^8 @typescript-eslint/eslint-plugin@^7 eslint-plugin-vue@^9
+$ pnpm update
+```
+
+不要使用官网 `8.x` 版本文档提供的初始化方式。其使用 `@eslint/config` 总是会安装 `9.x` 版本及该版本格式配置。
+
+手工书写配置文件：
+
+> `eslint` 不支持 ESM 格式语法，只能使用 CommonJS 格式。
+
+```shell
+$ cat <<EOF > .eslintrc.cjs
+module.exports = {
+  root: true,
+  env: {
+    browser: true,
+    es2021: true,
+    node: true,
+  },
+  parser: "vue-eslint-parser",
+  extends: [
+    // https://eslint.vuejs.org/user-guide/#usage
+    "plugin:vue/vue3-recommended",
+    "plugin:@typescript-eslint/recommended",
+  ],
+  parserOptions: {
+    ecmaVersion: "latest",
+    sourceType: "module",
+    // https://juejin.cn/post/7189536752062136357
+    parser: {
+      "ts": "@typescript-eslint/parser",
+      "<template>": "espree",
+    },
+    project: "./tsconfig.*?.json",
+    createDefaultProgram: false,
+    extraFileExtensions: [".vue"],
+  },
+  plugins: ["vue", "@typescript-eslint"],
+  // eslint不能对html文件生效
+  overrides: [
+    {
+      files: ["*.html"],
+      processor: "vue/.vue",
+    },
+  ],
+  // https://eslint.org/docs/latest/use/configure/language-options#specifying-globals
+  globals: {
+    OptionType: "readonly",
+  },
+};
+EOF
+$ git add .eslintrc.cjs
+```
+
+> 如果以上命令输出的文件中 URL 被转译了，可能需要禁用 shell 的转译功能。
+> https://ilayk.com/2021/07/23/fix-oh-my-zsh-&-iterm-copy-paste-backslashes
+
+配置 `.eslintignore` 文件：
+
+```shell
+$ cat <<EOF > .eslintignore
+dist
+node_modules
+.husky
+.vscode
+.idea
+*.sh
+*.md
+
+src/assets
+EOF
+$ git add .eslintignore
+```
+
+添加 `lint:eslint` 脚本：
+
+```shell
+$ cat <<EOF | patch package.json
+@@ -6,6 +6,7 @@
+   "scripts": {
+     "dev": "vite",
+     "build": "vue-tsc -b && vite build",
+-    "preview": "vite preview"
++    "preview": "vite preview",
++    "lint:eslint": "eslint --fix --ext .ts,.js,.vue ./src"
+   },
+   "dependencies": {
+EOF
+```
+
+> git commit: `build: setup and run eslint`
