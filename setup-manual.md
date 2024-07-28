@@ -53,3 +53,11 @@ $ cd newbie-admin-template
 ```
 
 > git commit: `build: Initialized project`
+
+固定 `package.json` 中包管理器为 `pnpm@latest` ：
+
+```shell
+$ corepack use pnpm@latest
+```
+
+> git commit: `build: fix packageManager to pnpm@latest`
