@@ -9,13 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.4.31"
+    "vue": "^3.4.34"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.5",
-    "typescript": "^5.2.2",
-    "vite": "^5.3.4",
-    "vue-tsc": "^2.0.24"
+    "@types/node": "^20.14.12",
+    "@vitejs/plugin-vue": "^5.1.1",
+    "typescript": "^5.5.4",
+    "vite": "^5.3.5",
+    "vue-tsc": "^2.0.29"
   },
   "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e"
 }

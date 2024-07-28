@@ -61,3 +61,85 @@ $ corepack use pnpm@latest
 ```
 
 > git commit: `build: fix packageManager to pnpm@latest`
+
+## 配置 "@" 路径别名
+
+将 `src` 目录别名配置为 `@` 似乎是非常常见的做法。
+
+> 为了减少后面代码中与我的参考文章中内容的差异，我也这样做。另外，我觉得这点配置不太“魔法”。
+
+首先需要安装 `@types/node` 开发依赖：
+
+```shell
+$ pnpm add --save-dev @types/node@^20
+$ pnpm update
+```
+
+> 需要同时配置 `vite.config.ts` 和 `tsconfig.*.json` 文件。
+
+在 `vite.config.ts` 中配置：
+
+```shell
+$ cat <<EOF | patch vite.config.ts
+@@ -1,7 +1,17 @@
+-import { defineConfig } from 'vite'
++import { defineConfig, UserConfig } from "vite";
+ import vue from '@vitejs/plugin-vue'
++import { resolve } from 'path'
++
++const pathSrc = resolve(__dirname, 'src')
+ 
+ // https://vitejs.dev/config/
+-export default defineConfig({
+-  plugins: [vue()],
+-})
++export default defineConfig((): UserConfig => {
++  return {
++    resolve: {
++      alias: {
++        '@': pathSrc,
++      },
++    },
++    plugins: [vue()],
++  };
++});
+EOF
+```
+
+在 `tsconfig.app.json` 中配置：
+
+```shell
+$ cat <<EOF | patch tsconfig.app.json
+@@ -1,5 +1,10 @@
+ {
+   "compilerOptions": {
++    "baseUrl": ".",
++    "paths": {
++      "@/*": ["src/*"]
++    },
++
+     "composite": true,
+     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+     "target": "ES2020",
+EOF
+```
+
+在 `tsconfig.node.json` 中配置：
+
+```shell
+$ cat <<EOF | patch tsconfig.node.json
+@@ -1,5 +1,10 @@
+ {
+   "compilerOptions": {
++    "baseUrl": ".",
++    "paths": {
++      "@/*": ["src/*"]
++    },
++
+     "composite": true,
+     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+     "skipLibCheck": true,
+EOF
+```
+
+> git commit: `build: add '@' path alias`
