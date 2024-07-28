@@ -503,3 +503,67 @@ $ echo "pnpm -v" > .husky/pre-commit
 ```
 
 > git commit: `chore: setup husky`
+
+### `lint-staged`
+
+安装依赖：
+
+```shell
+$ pnpm add --save-dev lint-staged@^15
+$ pnpm update
+```
+
+配置 `lint-staged`：
+
+```shell
+$ cat <<EOF > .lintstagedrc.json
+{
+  "*.{js,ts}": [
+    "eslint --fix",
+    "prettier --write"
+  ],
+  "*.{cjs,json}": [
+    "prettier --write"
+  ],
+  "*.{vue,html}": [
+    "eslint --fix",
+    "prettier --write",
+    "stylelint --fix"
+  ],
+  "*.{scss,css}": [
+    "stylelint --fix",
+    "prettier --write"
+  ],
+  "*.md": [
+    "prettier --write"
+  ]
+}
+EOF
+$ git add .lintstagedrc.json
+```
+
+添加 `lint:lint-staged` 脚本：
+
+```shell
+$ cat <<EOF | patch package.json
+@@ -10,6 +10,7 @@
+     "lint:eslint": "eslint --fix --ext .ts,.js,.vue ./src",
+     "lint:prettier": "prettier --write \"**/*.{js,cjs,ts,json,tsx,css,less,scss,vue,html,md}\"",
+     "lint:stylelint": "stylelint  \"**/*.{css,scss,vue}\" --fix",
++    "lint:lint-staged": "lint-staged",
+     "prepare": "husky"
+   },
+   "dependencies": {
+EOF
+```
+
+设置为 `pre-commit` 钩子：
+
+```shell
+$ cat <<EOF > .husky/pre-commit
+pnpm run lint:lint-staged
+EOF
+$ git add .husky/pre-commit
+```
+
+> git commit: `chore: setup lint-staged`
