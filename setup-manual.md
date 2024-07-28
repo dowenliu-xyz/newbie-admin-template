@@ -833,3 +833,111 @@ EOF
 
 > 我修改了 `HelloWorld.vue` 文件，以便验证 SCSS 是否正确集成。
 > git commit: `refactor: :recycle: integrate with scss`
+
+## 集成 `UnoCSS`
+
+安装依赖：
+
+```shell
+$ pnpm add --save-dev unocss@^0
+$ pnpm update
+```
+
+集成 `UnoCSS` 插件：
+
+```shell
+$ cat <<'EOF' | patch vite.config.ts
+@@ -2,6 +2,7 @@
+ import vue from "@vitejs/plugin-vue";
+ import ElementPlus from "unplugin-element-plus/vite";
+ import { resolve } from "path";
++import UnoCSS from "unocss/vite";
+ 
+ const pathSrc = resolve(__dirname, "src");
+ 
+@@ -23,6 +24,6 @@
+         },
+       },
+     },
+-    plugins: [vue(), ElementPlus({})],
++    plugins: [vue(), ElementPlus({}), UnoCSS({ hmrTopLevelAwait: false })],
+   };
+ });
+EOF
+```
+
+配置 `UnoCSS`：
+
+```shell
+$ cat <<'EOF' > unocss.config.ts
+import {
+  defineConfig,
+  presetAttributify,
+  presetIcons,
+  presetTypography,
+  presetUno,
+  presetWebFonts,
+  transformerDirectives,
+  transformerVariantGroup,
+} from "unocss";
+
+export default defineConfig({
+  shortcuts: {
+    "flex-center": "flex justify-center items-center",
+    "flex-x-center": "flex justify-center",
+    "flex-y-center": "flex items-center",
+    "wh-full": "w-full h-full",
+    "flex-x-between": "flex items-center justify-between",
+    "flex-x-end": "flex items-center justify-end",
+    "absolute-lt": "absolute left-0 top-0",
+    "absolute-rt": "absolute right-0 top-0 ",
+    "fixed-lt": "fixed left-0 top-0",
+  },
+  theme: {
+    colors: {
+      primary: "var(--el-color-primary)",
+      primary_dark: "var(--el-color-primary-light-5)",
+    },
+  },
+  presets: [
+    presetUno(),
+    presetAttributify(),
+    presetIcons(),
+    presetTypography(),
+    presetWebFonts({
+      fonts: {
+        // ...
+      },
+    }),
+  ],
+  transformers: [transformerDirectives(), transformerVariantGroup()],
+});
+EOF
+$ git add unocss.config.ts
+$ cat <<'EOF' | patch tsconfig.node.json
+@@ -14,5 +14,5 @@
+     "strict": true,
+     "noEmit": true
+   },
+-  "include": ["vite.config.ts"]
++  "include": ["vite.config.ts", "unocss.config.ts"]
+ }
+EOF
+```
+
+引入 `UnoCSS` 样式：
+
+```shell
+$ cat <<'EOF' | patch src/main.ts
+@@ -1,5 +1,6 @@
+ import { createApp } from "vue";
+ import "./style.css";
+ import App from "./App.vue";
++import "virtual:uno.css";
+ 
+ createApp(App).mount("#app");
+EOF
+```
+
+> 我修改了 `HelloWorld.vue` 文件，以便验证 `UnoCSS` 是否正常工作。
+> git commit: `refactor: :recycle: integrate with unocss`

@@ -2,6 +2,7 @@ import { defineConfig, UserConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import ElementPlus from "unplugin-element-plus/vite";
 import { resolve } from "path";
+import UnoCSS from "unocss/vite";
 
 const pathSrc = resolve(__dirname, "src");
 
@@ -23,6 +24,6 @@ export default defineConfig((): UserConfig => {
         },
       },
     },
-    plugins: [vue(), ElementPlus({})],
+    plugins: [vue(), ElementPlus({}), UnoCSS({ hmrTopLevelAwait: false })],
   };
 });
