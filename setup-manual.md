@@ -377,3 +377,113 @@ EOF
 ```
 
 > git commit: `build: setup and run stylelint`
+
+### `prettier`
+
+安装依赖：
+
+```shell
+$ pnpm add --save-dev prettier@^3 eslint-config-prettier@^9 eslint-plugin-prettier@^5
+$ pnpm update
+```
+
+配置 `.prettierrc.mjs` 文件：
+
+```shell
+$ cat <<EOF > .prettierrc.mjs
+export default {
+  arrowParens: "always",
+  bracketSameLine: false,
+  bracketSpacing: true,
+  embeddedLanguageFormatting: "auto",
+  htmlWhitespaceSensitivity: "css",
+  insertPragma: false,
+  jsxSingleQuote: false,
+  printWidth: 120,
+  proseWrap: "preserve",
+  quoteProps: "as-needed",
+  requirePragma: false,
+  semi: true,
+  singleQuote: false,
+  tabWidth: 2,
+  trailingComma: "all",
+  useTabs: false,
+  vueIndentScriptAndStyle: false,
+  endOfLine: "lf",
+  overrides: [
+    {
+      files: "*.html",
+      options: {
+        parser: "html",
+      },
+    },
+  ],
+};
+EOF
+$ git add .prettierrc.mjs
+```
+
+配置 `.prettierignore` 文件：
+
+```shell
+$ cat <<EOF > .prettierignore
+dist
+node_modules
+.husky
+.vscode
+.idea
+*.sh
+*.md
+
+src/assets
+EOF
+$ git add .prettierignore
+```
+
+修改 `eslint` 配置文件 `.eslintrc.cjs`：
+
+```shell
+$ cat <<EOF | patch .eslintrc.cjs
+@@ -10,6 +10,8 @@
+     // https://eslint.vuejs.org/user-guide/#usage
+     "plugin:vue/vue3-recommended",
+     "plugin:@typescript-eslint/recommended",
++    "prettier",
++    "plugin:prettier/recommended",
+   ],
+   parserOptions: {
+     ecmaVersion: "latest",
+@@ -24,6 +26,14 @@
+     extraFileExtensions: [".vue"],
+   },
+   plugins: ["vue", "@typescript-eslint"],
++  rules: {
++    "prettier/prettier": [
++      "error",
++      {
++        useTabs: false, // 不使用制表符
++      },
++    ],
++  },
+   // eslint不能对html文件生效
+   overrides: [
+     {
+EOF
+```
+
+添加 `lint:prettier` 脚本：
+
+```shell
+$ cat <<EOF | patch package.json
+@@ -8,6 +8,7 @@
+     "build": "vue-tsc -b && vite build",
+     "preview": "vite preview",
+     "lint:eslint": "eslint --fix --ext .ts,.js,.vue ./src",
++    "lint:prettier": "prettier --write \"**/*.{js,cjs,ts,json,tsx,css,less,scss,vue,html,md}\"",
+     "lint:stylelint": "stylelint  \"**/*.{css,scss,vue}\" --fix"
+   },
+   "dependencies": {
+EOF
+```
+
+> git commit: `build: setup and run prettier`
