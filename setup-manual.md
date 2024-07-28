@@ -271,3 +271,109 @@ EOF
 ```
 
 > git commit: `build: setup and run eslint`
+
+### `stylelint`
+
+安装依赖：
+
+```shell
+$ pnpm add --save-dev \
+  postcss@^8 \
+  postcss-html@^1 \
+  postcss-scss@^4 \
+  stylelint@^16 \
+  stylelint-config-html@^1 \
+  stylelint-config-recess-order@^5 \
+  stylelint-config-recommended-scss@^14 \
+  stylelint-config-recommended-vue@^1 \
+  stylelint-config-standard@^36
+$ pnpm update
+```
+
+配置 `.stylelintrc.mjs` 文件：
+
+```shell
+$ cat <<EOF > .stylelintrc.mjs
+export default {
+  extends: [
+    "stylelint-config-standard",
+    "stylelint-config-recommended-scss",
+    "stylelint-config-recommended-vue/scss",
+    "stylelint-config-html/vue",
+    "stylelint-config-recess-order",
+  ],
+  overrides: [
+    {
+      files: ["**/*.{vue,html}"],
+      customSyntax: "postcss-html",
+    },
+    {
+      files: ["**/*.{css,scss}"],
+      customSyntax: "postcss-scss",
+    },
+  ],
+  rules: {
+    "import-notation": "string", // ("string"|"url")
+    "selector-class-pattern": null,
+    "custom-property-pattern": null,
+    "keyframes-name-pattern": null,
+    "no-descending-specificity": null,
+    "no-empty-source": null,
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        ignorePseudoClasses: ["global", "export", "deep"],
+      },
+    ],
+    "property-no-unknown": [
+      true,
+      {
+        ignoreProperties: [],
+      },
+    ],
+    "at-rule-no-unknown": [
+      true,
+      {
+        ignoreAtRules: ["apply", "use"],
+      },
+    ],
+  },
+};
+EOF
+$ git add .stylelintrc.mjs
+```
+
+配置 `.stylelintignore` 文件：
+
+```shell
+$ cat <<EOF > .stylelintignore
+dist
+node_modules
+.husky
+.vscode
+.idea
+*.sh
+*.md
+
+src/assets
+EOF
+$ git add .stylelintignore
+```
+
+添加 `lint:stylelint` 脚本：
+
+```shell
+$ cat <<EOF | patch package.json
+@@ -7,6 +7,7 @@
+     "dev": "vite",
+     "build": "vue-tsc -b && vite build",
+     "preview": "vite preview",
+-    "lint:eslint": "eslint --fix --ext .ts,.js,.vue ./src"
++    "lint:eslint": "eslint --fix --ext .ts,.js,.vue ./src",
++    "lint:stylelint": "stylelint  \"**/*.{css,scss,vue}\" --fix"
+   },
+   "dependencies": {
+EOF
+```
+
+> git commit: `build: setup and run stylelint`
