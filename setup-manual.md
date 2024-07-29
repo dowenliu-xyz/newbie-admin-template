@@ -1124,3 +1124,21 @@ EOF
 ```
 
 > git commit: `refactor: :recycle: setup env & api proxy`
+
+## 其他组件
+
+> “其他“涉及的范围太广，这里只安装几乎必用的依赖。YAGNI
+
+以下组件通常需要和业务逻辑一起配置，这里只记录安装依赖
+
+```shell
+$ pnpm add \
+  vue-router@^4 \
+  @vueuse/core@^10 \
+  nprogress@^0
+$ pnpm add --save-dev \
+  @types/nprogress@^0
+$ pnpm update
+```
+
+> git commit: `refactor: :recycle: add vue-router, vueuse, nprogress`
