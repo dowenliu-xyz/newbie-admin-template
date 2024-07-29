@@ -1142,3 +1142,27 @@ $ pnpm update
 ```
 
 > git commit: `refactor: :recycle: add vue-router, vueuse, nprogress`
+
+---
+以下只做记录，当前模板项目未安装。
+
+## `wangEditor`
+
+```shell
+$ pnpm add @wangeditor/editor@^5 @wangeditor/editor-for-vue@^5
+$ pnpm update
+```
+
+## `echarts`
+
+```shell
+$ pnpm add echarts@^5
+$ pnpm update
+```
+
+## `vite-plugin-mock-dev-server`
+
+```shell
+$ pnpm add --save-dev vite-plugin-mock-dev-server@^1
+$ pnpm update
+```
